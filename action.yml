@@ -1,0 +1,62 @@
+name: "AI PR Description Generator"
+description: "Generate a pull request description using AI based on the changes made in the PR."
+
+author: "Bishal Prasad"
+
+inputs:
+  github_token:
+    description: "GitHub token with permissions to read PR details and post comments."
+    required: true
+    default: "${{ secrets.GITHUB_TOKEN }}"
+  llm_api_key:
+    description: "LLM API key for accessing the AI model to generate PR descriptions."
+    required: true
+    default: "${{ secrets.LLM_API_KEY }}"
+  ai_model:
+    description: "The AI model to use for generating the PR description (e.g., 'gpt-4')."
+    required: false
+    default: "gpt-4o-mini"
+  max_diff_lines:
+    description: "Maximum diff lines to process for generating the PR description. If the diff exceeds this limit, a summary will be generated instead."
+    required: false
+    default: 5000
+  eenable_incremental_diff_processing:
+    description: "Enable incremental diff processing to handle large diffs by processing them in chunks."
+    required: false
+    default: true
+  # max_tokens:
+  #   description: "Maximum number of tokens for the generated description."
+  #   required: false
+  #   default: 500
+  # temperature:
+  #   description: "Temperature setting for the AI model (0.0 to 1.0)."
+  #   required: false
+  #   default: 0.7
+  # top_p:
+  #   description: "Top-p setting for nucleus sampling (0.0 to 1.0)."
+  #   required: false
+  #   default: 0.9
+  # frequency_penalty:
+  #   description: "Frequency penalty for the AI model (0.0 to 2.0)."
+  #   required: false
+  #   default: 0.0
+  # presence_penalty:
+  #   description: "Presence penalty for the AI model (0.0 to 2.0)."
+  #   required: false
+  #   default: 0.0
+  # system_prompt:
+  #   description: "System prompt to guide the AI in generating the PR description."
+  #   required: false
+  #   default: "You are an assistant that generates concise and informative pull request descriptions based on the changes made in the PR. Focus on summarizing the key changes, the purpose of the PR, and any relevant context for reviewers."
+  # user_prompt:
+  #   description: "User prompt to provide specific instructions or context for the AI when generating the PR description."
+  #   required: false
+  #   default: "Generate a pull request description based on the following changes:"
+
+runs:
+  using: "node16"
+  main: "dist/index.js"
+
+branding:
+  icon: "git-pull-request"
+  color: "blue"
