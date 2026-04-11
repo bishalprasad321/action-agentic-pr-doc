@@ -9,8 +9,8 @@
  */
 
 import fetch from "node-fetch";
-import { Logger } from "../utils/logger";
-import { LLMContext, LLMOutput } from "../utils/types";
+import { Logger } from "../utils/logger.js";
+import { LLMContext, LLMOutput } from "../utils/types.js";
 
 interface OpenAIMessage {
   role: "system" | "user";
