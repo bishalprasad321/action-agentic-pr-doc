@@ -111,7 +111,7 @@ sourceFiles.forEach(file => {
 // 7. Check config files
 const configFiles = [
   'tsconfig.json',
-  '.eslintrc.json',
+  'eslint.config.js',
   '.prettierrc',
   'action.yml',
 ];
