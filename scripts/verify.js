@@ -7,13 +7,9 @@
  * or: node scripts/verify.js
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 const checks = [];
 let passed = 0;
@@ -111,7 +107,7 @@ sourceFiles.forEach(file => {
 // 7. Check config files
 const configFiles = [
   'tsconfig.json',
-  'eslint.config.js',
+  'eslint.config.mjs',
   '.prettierrc',
   'action.yml',
 ];
