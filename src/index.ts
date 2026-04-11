@@ -1,0 +1,385 @@
+#!/usr/bin/env node
+
+/**
+ * Central Orchestrator for AI PR Description Generator
+ *
+ * Responsibilities:
+ * - Coordinate all modules (github, diff, llm, state, formatter)
+ * - Control execution flow (14 steps)
+ * - Handle failures gracefully (never break PR)
+ * - Log execution for debugging
+ *
+ * Heavy logic lives in dedicated modules, NOT here.
+ */
+
+import * as core from "@actions/core";
+import { Logger } from "./utils/logger";
+import { GitHubClient } from "./github/github-client";
+import { DiffProcessor } from "./diff/diff-processor";
+import { LLMClient } from "./llm/llm-client";
+import { StateManager } from "./state/state-manager";
+import { Formatter } from "./utils/formatter";
+
+// =============================================================================
+// INITIALIZATION
+// =============================================================================
+
+const logger = new Logger();
+
+async function main() {
+  logger.info("=".repeat(70));
+  logger.info("🚀 AI PR Description Generator - Starting");
+  logger.info("=".repeat(70));
+
+  try {
+    // =========================================================================
+    // STEP 1: PARSE INPUTS
+    // =========================================================================
+    logger.info("📋 [STEP 1] Parsing inputs from action.yml...");
+
+    const inputs = {
+      githubToken: core.getInput("github_token"),
+      llmApiKey: core.getInput("llm_api_key"),
+      aiModel: core.getInput("ai_model") || "gpt-4o-mini",
+      maxDiffLines: parseInt(core.getInput("max_diff_lines")) || 5000,
+      enableIncrementalDiffProcessing:
+        core.getInput("eenable_incremental_diff_processing") === "true" ||
+        true,
+      debug: core.getInput("debug") === "true" || false,
+    };
+
+    if (!inputs.githubToken || !inputs.llmApiKey) {
+      throw new Error("Missing required inputs: github_token or llm_api_key");
+    }
+
+    logger.info(`✓ Inputs validated`);
+    logger.info(`  - AI Model: ${inputs.aiModel}`);
+    logger.info(`  - Max Diff Lines: ${inputs.maxDiffLines}`);
+    logger.info(
+      `  - Incremental Processing: ${inputs.enableIncrementalDiffProcessing}`
+    );
+    logger.info(`  - Debug Mode: ${inputs.debug}`);
+
+    // =========================================================================
+    // STEP 2: EXTRACT GITHUB CONTEXT
+    // =========================================================================
+    logger.info("📦 [STEP 2] Extracting GitHub context from environment...");
+
+    const eventName = process.env.GITHUB_EVENT_NAME;
+    const eventPayload = JSON.parse(process.env.GITHUB_EVENT_PATH || "{}");
+
+    if (eventName !== "pull_request") {
+      logger.info(`⏭️  Event is '${eventName}', not 'pull_request'. Exiting.`);
+      core.info("Action only runs on pull_request events");
+      return;
+    }
+
+    const prNumber = eventPayload.pull_request?.number;
+    const repoOwner = process.env.GITHUB_REPOSITORY?.split("/")[0];
+    const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1];
+    const eventAction = eventPayload.action;
+
+    if (!prNumber || !repoOwner || !repoName) {
+      throw new Error("Missing PR context from GitHub event");
+    }
+
+    logger.info(`✓ GitHub context extracted`);
+    logger.info(`  - PR: #${prNumber}`);
+    logger.info(`  - Repository: ${repoOwner}/${repoName}`);
+    logger.info(`  - Event Action: ${eventAction}`);
+
+    // =========================================================================
+    // STEP 3: INITIALIZE CLIENTS
+    // =========================================================================
+    logger.info("🔌 [STEP 3] Initializing clients...");
+
+    const gitHub = new GitHubClient(inputs.githubToken, {
+      owner: repoOwner,
+      repo: repoName,
+    });
+
+    const llm = new LLMClient(inputs.llmApiKey, inputs.aiModel);
+    const stateManager = new StateManager();
+    const diffProcessor = new DiffProcessor();
+    const formatter = new Formatter();
+
+    logger.info(`✓ All clients initialized`);
+
+    // =========================================================================
+    // STEP 4: FETCH PR METADATA
+    // =========================================================================
+    logger.info("📡 [STEP 4] Fetching PR metadata...");
+
+    const pr = await gitHub.getPullRequest(prNumber);
+    if (!pr) {
+      throw new Error(`Failed to fetch PR #${prNumber}`);
+    }
+
+    const files = await gitHub.getChangedFiles(prNumber);
+    const commits = await gitHub.getCommits(prNumber);
+
+    if (!commits || commits.length === 0) {
+      throw new Error(`No commits found for PR #${prNumber}`);
+    }
+
+    const currentHeadSha = commits[commits.length - 1].sha;
+
+    logger.info(`✓ PR metadata fetched`);
+    logger.info(`  - Title: ${pr.title}`);
+    logger.info(`  - Base SHA: ${pr.base.sha.slice(0, 7)}`);
+    logger.info(`  - Head SHA: ${currentHeadSha.slice(0, 7)}`);
+    logger.info(`  - Files Changed: ${files.length}`);
+    logger.info(`  - Commits: ${commits.length}`);
+
+    // =========================================================================
+    // STEP 5: STATE CHECK (IDEMPOTENCY) - CRITICAL
+    // =========================================================================
+    logger.info("💾 [STEP 5] Checking state for idempotency...");
+
+    const lastProcessedSha = stateManager.getLastProcessedSha();
+
+    if (lastProcessedSha === currentHeadSha) {
+      logger.info(
+        `✓ No new changes detected (already processed SHA ${currentHeadSha.slice(0, 7)})`
+      );
+      logger.info(`ℹ️  Exiting without processing`);
+      core.info("PR already processed for current commit");
+      return;
+    }
+
+    if (lastProcessedSha) {
+      logger.info(
+        `✓ Incremental diff: ${lastProcessedSha.slice(0, 7)} → ${currentHeadSha.slice(0, 7)}`
+      );
+    } else {
+      logger.info(`✓ First-time processing for this PR`);
+    }
+
+    // =========================================================================
+    // STEP 6: DIFF RETRIEVAL
+    // =========================================================================
+    logger.info("📝 [STEP 6] Retrieving diff...");
+
+    let diffContent: string;
+    let diffMode: "full" | "incremental";
+
+    if (
+      inputs.enableIncrementalDiffProcessing &&
+      lastProcessedSha &&
+      eventAction === "synchronize"
+    ) {
+      logger.info(`🟡 Incremental mode: fetching diff from ${lastProcessedSha.slice(0, 7)}`);
+      diffContent = await gitHub.getDiffBetween(lastProcessedSha, currentHeadSha);
+      diffMode = "incremental";
+    } else {
+      logger.info(`🟢 Full mode: fetching diff from base to head`);
+      diffContent = await gitHub.getDiff(prNumber);
+      diffMode = "full";
+    }
+
+    const diffLineCount = diffContent.split("\n").length;
+    logger.info(`✓ Diff retrieved`);
+    logger.info(`  - Mode: ${diffMode}`);
+    logger.info(`  - Lines: ${diffLineCount}`);
+
+    if (diffLineCount > inputs.maxDiffLines) {
+      logger.warn(
+        `⚠️  Diff exceeds max_diff_lines (${diffLineCount} > ${inputs.maxDiffLines})`
+      );
+      logger.info(`📊 Will use summarization instead of full processing`);
+    }
+
+    // =========================================================================
+    // STEP 7: DIFF INTELLIGENCE LAYER
+    // =========================================================================
+    logger.info("🧠 [STEP 7] Processing diff through intelligence layer...");
+
+    const processedChunks = diffProcessor.processAndFilter(
+      files,
+      diffContent,
+      inputs.maxDiffLines
+    );
+
+    logger.info(`✓ Diff processed`);
+    logger.info(`  - Chunks: ${processedChunks.length}`);
+    logger.info(
+      `  - Total changes: +${processedChunks.reduce((acc, c) => acc + c.additions, 0)}/-${processedChunks.reduce((acc, c) => acc + c.deletions, 0)}`
+    );
+
+    if (processedChunks.length === 0) {
+      logger.info(
+        `⚠️  No meaningful changes detected (empty diff after filtering)`
+      );
+      logger.info(`ℹ️  Exiting without processing`);
+      core.info("No meaningful changes to document");
+      return;
+    }
+
+    // =========================================================================
+    // STEP 8: CONTEXT PREPARATION
+    // =========================================================================
+    logger.info("🎯 [STEP 8] Preparing context for LLM...");
+
+    const context = {
+      chunks: processedChunks,
+      commitMessages: commits.map((c) => c.message),
+      repoMetadata: {
+        owner: repoOwner,
+        name: repoName,
+        prNumber,
+        prTitle: pr.title,
+        prDescription: pr.body || "",
+      },
+      stats: {
+        filesChanged: files.length,
+        totalAdditions: processedChunks.reduce((acc, c) => acc + c.additions, 0),
+        totalDeletions: processedChunks.reduce((acc, c) => acc + c.deletions, 0),
+        commits: commits.length,
+      },
+    };
+
+    logger.info(`✓ Context prepared`);
+    logger.info(
+      `  - Context size: ${JSON.stringify(context).length} bytes`
+    );
+
+    if (inputs.debug) {
+      logger.debug("=== DEBUG: Context Prepared ===");
+      logger.debug(JSON.stringify(context, null, 2));
+    }
+
+    // =========================================================================
+    // STEP 9: LLM EXECUTION
+    // =========================================================================
+    logger.info("🤖 [STEP 9] Calling LLM...");
+
+    let llmOutput: Record<string, unknown>;
+
+    try {
+      const prompt = llm.buildPrompt(context);
+      llmOutput = await llm.callLLM(prompt);
+
+      logger.info(`✓ LLM execution successful`);
+      logger.info(`  - Summary length: ${(llmOutput.summary as string).length} chars`);
+
+      if (inputs.debug) {
+        logger.debug("=== DEBUG: LLM Output ===");
+        logger.debug(JSON.stringify(llmOutput, null, 2));
+      }
+    } catch (error) {
+      logger.error(`❌ LLM execution failed: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(
+        `🛑 Will not update PR to avoid breaking developer workflow`
+      );
+
+      // Post error comment to PR
+      await gitHub.commentOnPR(
+        prNumber,
+        `⚠️ **AI Description Generation Failed**\n\nThe automated PR description generation encountered an error. Please check the action logs for details.`
+      );
+
+      core.setFailed("LLM generation failed");
+      return;
+    }
+
+    // =========================================================================
+    // STEP 10: FORMAT OUTPUT
+    // =========================================================================
+    logger.info("🎨 [STEP 10] Formatting output to Markdown...");
+
+    const formattedDescription = formatter.toMarkdown(llmOutput);
+
+    logger.info(`✓ Output formatted`);
+    logger.info(`  - Markdown size: ${formattedDescription.length} bytes`);
+
+    if (inputs.debug) {
+      logger.debug("=== DEBUG: Formatted Output ===");
+      logger.debug(formattedDescription);
+    }
+
+    // =========================================================================
+    // STEP 11: SAFE PR UPDATE
+    // =========================================================================
+    logger.info("🔄 [STEP 11] Safely updating PR description...");
+
+    const existingBody = pr.body || "";
+    const updatedBody = formatter.replaceAISection(
+      existingBody,
+      formattedDescription
+    );
+
+    logger.info(`✓ PR body prepared`);
+    logger.info(`  - Existing body size: ${existingBody.length} bytes`);
+    logger.info(`  - Updated body size: ${updatedBody.length} bytes`);
+
+    if (inputs.debug) {
+      logger.debug("=== DEBUG: Updated PR Body ===");
+      logger.debug(updatedBody);
+    }
+
+    // =========================================================================
+    // STEP 12: PUSH UPDATE TO GITHUB
+    // =========================================================================
+    logger.info("📤 [STEP 12] Pushing update to GitHub...");
+
+    try {
+      await gitHub.updatePullRequest(prNumber, {
+        body: updatedBody,
+      });
+      logger.info(`✓ PR updated successfully`);
+    } catch (error) {
+      logger.error(
+        `❌ Failed to update PR: ${error instanceof Error ? error.message : String(error)}`
+      );
+      throw error;
+    }
+
+    // =========================================================================
+    // STEP 13: PERSIST STATE
+    // =========================================================================
+    logger.info("💾 [STEP 13] Persisting state...");
+
+    stateManager.setLastProcessedSha(currentHeadSha);
+
+    logger.info(`✓ State persisted`);
+    logger.info(`  - Saved SHA: ${currentHeadSha.slice(0, 7)}`);
+
+    // =========================================================================
+    // STEP 14: FINAL LOGGING
+    // =========================================================================
+    logger.info("✅ [STEP 14] Final logging");
+    logger.info("=".repeat(70));
+    logger.info("✨ PR description updated successfully");
+    logger.info(`📊 Summary:`);
+    logger.info(`  - Files: ${files.length}`);
+    logger.info(`  - Changes: +${context.stats.totalAdditions}/-${context.stats.totalDeletions}`);
+    logger.info(`  - Commits: ${commits.length}`);
+    logger.info(`  - PR: #${prNumber} (${pr.title})`);
+    logger.info("=".repeat(70));
+
+    core.info("Action completed successfully");
+  } catch (error) {
+    // =========================================================================
+    // ERROR HANDLING
+    // =========================================================================
+    logger.error("=".repeat(70));
+    logger.error("❌ Action failed with error:");
+    logger.error(
+      error instanceof Error ? error.message : JSON.stringify(error)
+    );
+    logger.error("=".repeat(70));
+
+    core.setFailed(
+      error instanceof Error
+        ? error.message
+        : "Unknown error occurred in AI PR generator"
+    );
+  }
+}
+
+// Run the action
+main().catch((error) => {
+  logger.error("Fatal error in main execution:");
+  logger.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});
