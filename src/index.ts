@@ -13,6 +13,7 @@
  */
 
 import * as core from "@actions/core";
+import fs from "fs";
 import { Logger } from "./utils/logger.js";
 import { GitHubClient } from "./github/github-client.js";
 import { DiffProcessor } from "./diff/diff-processor.js";
@@ -31,6 +32,13 @@ function isValidLLMOutput(
     Array.isArray(output.keyPoints) &&
     Array.isArray(output.highlights)
   );
+}
+
+interface GitHubEventPayload {
+  action?: string;
+  pull_request?: {
+    number?: number;
+  };
 }
 
 // =============================================================================
@@ -56,8 +64,8 @@ async function main() {
       aiModel: core.getInput("ai_model") || "gpt-4o-mini",
       maxDiffLines: parseInt(core.getInput("max_diff_lines")) || 5000,
       enableIncrementalDiffProcessing:
-        core.getInput("eenable_incremental_diff_processing") === "true" || true,
-      debug: core.getInput("debug") === "true" || false,
+        core.getInput("enable_incremental_diff_processing") !== "false",
+      debug: core.getInput("debug") === "true",
     };
 
     if (!inputs.githubToken || !inputs.llmApiKey) {
@@ -78,7 +86,26 @@ async function main() {
     logger.info("📦 [STEP 2] Extracting GitHub context from environment...");
 
     const eventName = process.env.GITHUB_EVENT_NAME;
-    const eventPayload = JSON.parse(process.env.GITHUB_EVENT_PATH || "{}");
+    const eventPath = process.env.GITHUB_EVENT_PATH;
+    let eventPayload: GitHubEventPayload = {};
+
+    if (eventPath) {
+      if (!fs.existsSync(eventPath)) {
+        throw new Error(`Event file not found at ${eventPath}`);
+      }
+
+      try {
+        const rawData = fs.readFileSync(eventPath, "utf-8");
+        eventPayload = JSON.parse(rawData) as GitHubEventPayload;
+        logger.info(`✓ Loaded event payload from ${eventPath}`);
+      } catch (fileError) {
+        throw new Error(
+          `Failed to read GitHub event payload from ${eventPath}: ${
+            fileError instanceof Error ? fileError.message : String(fileError)
+          }`
+        );
+      }
+    }
 
     if (eventName !== "pull_request") {
       logger.info(`⏭️  Event is '${eventName}', not 'pull_request'. Exiting.`);
@@ -86,13 +113,15 @@ async function main() {
       return;
     }
 
-    const prNumber = eventPayload.pull_request?.number;
+    const prNumber = eventPayload?.pull_request?.number;
     const repoOwner = process.env.GITHUB_REPOSITORY?.split("/")[0];
     const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1];
-    const eventAction = eventPayload.action;
+    const eventAction = eventPayload?.action;
 
     if (!prNumber || !repoOwner || !repoName) {
-      throw new Error("Missing PR context from GitHub event");
+      throw new Error(
+        `Missing PR context. PR: ${prNumber}, Owner: ${repoOwner}, Repo: ${repoName}`
+      );
     }
 
     logger.info(`✓ GitHub context extracted`);
@@ -237,7 +266,7 @@ async function main() {
     // =========================================================================
     logger.info("🎯 [STEP 8] Preparing context for LLM...");
 
-    const context = {
+    const llmContext = {
       chunks: processedChunks,
       commitMessages: commits.map((c) => c.message),
       repoMetadata: {
@@ -262,11 +291,11 @@ async function main() {
     };
 
     logger.info(`✓ Context prepared`);
-    logger.info(`  - Context size: ${JSON.stringify(context).length} bytes`);
+    logger.info(`  - Context size: ${JSON.stringify(llmContext).length} bytes`);
 
     if (inputs.debug) {
       logger.debug("=== DEBUG: Context Prepared ===");
-      logger.debug(JSON.stringify(context, null, 2));
+      logger.debug(JSON.stringify(llmContext, null, 2));
     }
 
     // =========================================================================
@@ -277,7 +306,7 @@ async function main() {
     let llmOutput: Record<string, unknown>;
 
     try {
-      const prompt = llm.buildPrompt(context);
+      const prompt = llm.buildPrompt(llmContext);
       llmOutput = await llm.callLLM(prompt);
 
       logger.info(`✓ LLM execution successful`);
@@ -313,7 +342,7 @@ async function main() {
     logger.info("🎨 [STEP 10] Formatting output to Markdown...");
 
     if (!isValidLLMOutput(llmOutput)) {
-      throw new Error("Invaliud LLM output format");
+      throw new Error("Invalid LLM output format");
     }
     const formattedDescription = formatter.toMarkdown(llmOutput as LLMOutput);
 
@@ -381,7 +410,7 @@ async function main() {
     logger.info(`📊 Summary:`);
     logger.info(`  - Files: ${files.length}`);
     logger.info(
-      `  - Changes: +${context.stats.totalAdditions}/-${context.stats.totalDeletions}`
+      `  - Changes: +${llmContext.stats.totalAdditions}/-${llmContext.stats.totalDeletions}`
     );
     logger.info(`  - Commits: ${commits.length}`);
     logger.info(`  - PR: #${prNumber} (${pr.title})`);
