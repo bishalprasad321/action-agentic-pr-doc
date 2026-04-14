@@ -310,7 +310,9 @@ Please generate a JSON response with the PR description details.`;
     const trimmed = content.trim();
 
     if (trimmed.startsWith("```")) {
-      const fenced = trimmed.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
+      const fenced = trimmed
+        .replace(/^```(?:json)?\s*/, "")
+        .replace(/\s*```$/, "");
       return fenced.trim();
     }
 

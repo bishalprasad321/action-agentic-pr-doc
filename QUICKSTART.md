@@ -23,7 +23,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Generate AI PR Description
         uses: bishal-pdMSFT/action-agentic-pr-doc@v1
         with:
@@ -106,6 +106,7 @@ When you create/update a PR:
 ```
 
 Example output:
+
 ```markdown
 ## 🤖 AI Generated Summary
 
@@ -113,11 +114,13 @@ Refactored authentication to use async/await.
 Added token refresh mechanism with 5 min expiry.
 
 ### Key Points
+
 - Converted callbacks to Promises
 - Added automatic token refresh
 - 95% reduction in 401 errors
 
-### Highlights  
+### Highlights
+
 - Better code maintainability
 - Enhanced security with rate limiting
 ```
@@ -145,7 +148,7 @@ with:
 
 ```yaml
 with:
-  max_diff_lines: 5000      # Default
+  max_diff_lines: 5000 # Default
   # Increase for large PRs, decrease to save costs
 ```
 
@@ -153,20 +156,20 @@ with:
 
 ```yaml
 with:
-  debug: true               # Logs everything
+  debug: true # Logs everything
 ```
 
 ---
 
 ## Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
+| Problem                   | Solution                                                               |
+| ------------------------- | ---------------------------------------------------------------------- |
 | "Missing required inputs" | Add your provider API key to repo secrets and pass it to `llm_api_key` |
-| "Action didn't run" | Check PR trigger: `types: [opened, synchronize]` |
-| "No changes to document" | PR diff might be empty or all files ignored |
-| "Diff too large" | Increase `max_diff_lines` or split PR |
-| "API error 401" | Check the provider key is valid and matches `llm_provider` |
+| "Action didn't run"       | Check PR trigger: `types: [opened, synchronize]`                       |
+| "No changes to document"  | PR diff might be empty or all files ignored                            |
+| "Diff too large"          | Increase `max_diff_lines` or split PR                                  |
+| "API error 401"           | Check the provider key is valid and matches `llm_provider`             |
 
 See [README.md](README.md#troubleshooting) for more.
 

@@ -5,6 +5,7 @@ Automatically generate intelligent pull request descriptions using AI, analyzing
 ## Features
 
 ✨ **Key Features:**
+
 - 🤖 **AI-Powered Analysis** - Supports OpenAI, Gemini, and OpenAI-compatible models
 - 🔄 **Incremental Processing** - Handles large diffs efficiently
 - 🛡️ **Safe Updates** - Never overwrites developer notes
@@ -35,7 +36,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Generate AI PR Description
         uses: bishal-pdMSFT/action-agentic-pr-doc@v1
         with:
@@ -49,15 +50,15 @@ jobs:
 
 ### Inputs
 
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `github_token` | ✅ | `${{ secrets.GITHUB_TOKEN }}` | GitHub token for PR access |
-| `llm_api_key` | ✅ | `${{ secrets.LLM_API_KEY }}` | Provider API key such as OpenAI or Gemini |
-| `llm_provider` | ❌ | `auto` | Provider routing: `auto`, `openai`, `openai-compatible`, `gemini` |
-| `llm_api_base_url` | ❌ | `""` | Optional custom endpoint for OpenAI-compatible providers |
-| `ai_model` | ❌ | `gpt-4o-mini` | Model to use (e.g., `gpt-4o-mini`, `gemini-1.5-flash`, custom compatible model) |
-| `max_diff_lines` | ❌ | `5000` | Max diff lines to process before summarizing |
-| `enable_incremental_diff_processing` | ❌ | `true` | Enable incremental processing on updates |
+| Input                                | Required | Default                       | Description                                                                     |
+| ------------------------------------ | -------- | ----------------------------- | ------------------------------------------------------------------------------- |
+| `github_token`                       | ✅       | `${{ secrets.GITHUB_TOKEN }}` | GitHub token for PR access                                                      |
+| `llm_api_key`                        | ✅       | `${{ secrets.LLM_API_KEY }}`  | Provider API key such as OpenAI or Gemini                                       |
+| `llm_provider`                       | ❌       | `auto`                        | Provider routing: `auto`, `openai`, `openai-compatible`, `gemini`               |
+| `llm_api_base_url`                   | ❌       | `""`                          | Optional custom endpoint for OpenAI-compatible providers                        |
+| `ai_model`                           | ❌       | `gpt-4o-mini`                 | Model to use (e.g., `gpt-4o-mini`, `gemini-1.5-flash`, custom compatible model) |
+| `max_diff_lines`                     | ❌       | `5000`                        | Max diff lines to process before summarizing                                    |
+| `enable_incremental_diff_processing` | ❌       | `true`                        | Enable incremental processing on updates                                        |
 
 ## Local Development
 
@@ -139,7 +140,7 @@ src/
 
 1. **Trigger**: Action runs on PR `opened` or `synchronize` events
 2. **State Check**: Verifies if commit was already processed (prevents duplicates)
-3. **Diff Retrieval**: 
+3. **Diff Retrieval**:
    - First run: Gets full diff from base to head
    - Subsequent runs: Gets incremental diff from last processed SHA
 4. **Intelligent Filtering**:
@@ -156,8 +157,11 @@ src/
 
 ```markdown
 ## 📌 Summary
+
 <!-- AI:START -->
+
 ## 🤖 AI Generated Summary
+
 - Summary of changes
 - Key points
 - Highlights
@@ -166,11 +170,13 @@ src/
 ---
 
 ## 🧑‍💻 Developer Notes
+
 - Any custom notes you want to add
 
 ---
 
 ## ✅ Checklist
+
 - [ ] Tests added
 - [ ] Documentation updated
 ```
@@ -181,17 +187,20 @@ src/
 ## 🤖 AI Generated Summary
 
 ### Summary
-Refactored authentication module to use async/await instead of callbacks. 
-Added token refresh mechanism and improved error handling with comprehensive 
+
+Refactored authentication module to use async/await instead of callbacks.
+Added token refresh mechanism and improved error handling with comprehensive
 retry logic.
 
 ### Key Points
+
 - Converted callback-based API calls to Promise-based approach
 - Added automatic token refresh with 5-minute expiry check
 - Implemented exponential backoff for failed API calls
 - Updated all 12 authentication tests to cover new scenarios
 
 ### Highlights
+
 - Performance: Token refresh reduces 401 errors by 95%
 - Security: Added rate limiting to prevent brute force attempts
 - DX: Cleaner code with async/await improves maintainability
@@ -228,10 +237,11 @@ steps:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       llm_api_key: ${{ secrets.GEMINI_API_KEY }}
       llm_provider: gemini
-      debug: true  # Logs full context, prompts, responses
+      debug: true # Logs full context, prompts, responses
 ```
 
 Debug logs include:
+
 - Full context object sent to LLM
 - Raw LLM responses
 - Formatted Markdown
@@ -262,6 +272,7 @@ ai_model: your-model-name
 ### GitHub Token
 
 Uses default `${{ secrets.GITHUB_TOKEN }}` with permissions:
+
 - `pull-requests: write` - Update PR body
 - `contents: read` - Read PR changes
 
@@ -288,14 +299,14 @@ git push
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| "Missing required inputs" | Check `github_token` and `llm_api_key` in secrets |
-| "LLM API error 401" | Verify the configured provider API key is valid and matches the selected provider |
-| "No meaningful changes" | PR diff is probably empty or all files are ignored |
-| "State file not found" | First run; expected behavior |
-| "Diff exceeds max lines" | Increase `max_diff_lines` or split PR into smaller PRs |
-| "Only generated .gitkeep files" | Check that src directory structure is complete |
+| Issue                           | Solution                                                                          |
+| ------------------------------- | --------------------------------------------------------------------------------- |
+| "Missing required inputs"       | Check `github_token` and `llm_api_key` in secrets                                 |
+| "LLM API error 401"             | Verify the configured provider API key is valid and matches the selected provider |
+| "No meaningful changes"         | PR diff is probably empty or all files are ignored                                |
+| "State file not found"          | First run; expected behavior                                                      |
+| "Diff exceeds max lines"        | Increase `max_diff_lines` or split PR into smaller PRs                            |
+| "Only generated .gitkeep files" | Check that src directory structure is complete                                    |
 
 ## License
 

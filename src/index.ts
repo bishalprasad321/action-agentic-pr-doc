@@ -41,11 +41,7 @@ interface GitHubEventPayload {
   };
 }
 
-type SupportedLLMProvider =
-  | "auto"
-  | "openai"
-  | "openai-compatible"
-  | "gemini";
+type SupportedLLMProvider = "auto" | "openai" | "openai-compatible" | "gemini";
 
 function isSupportedLLMProvider(
   provider: string
