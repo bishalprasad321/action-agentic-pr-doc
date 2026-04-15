@@ -175,7 +175,9 @@ Please generate a JSON response with the PR description details.`;
         } catch (parseError) {
           throw new Error(
             `Failed to parse LLM response as JSON: ${
-              parseError instanceof Error ? parseError.message : String(parseError)
+              parseError instanceof Error
+                ? parseError.message
+                : String(parseError)
             }. Response preview: ${content.substring(0, 160)}`
           );
         }
