@@ -117,7 +117,7 @@ jobs:
           ai_model: gemini-2.5-flash
           max_diff_lines: "5000"
           enable_incremental_diff_processing: "true"
-          debug: ${{ github.event.inputs.debug_enabled || false }}
+          debug: ${{ inputs.debug_enabled || 'false' }}
         continue-on-error: true
 
       - name: Log action output

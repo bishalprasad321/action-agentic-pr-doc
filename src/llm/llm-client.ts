@@ -172,9 +172,11 @@ Please generate a JSON response with the PR description details.`;
             `✓ LLM succeeded on attempt ${attempt} (summary: ${parsed.summary.length} chars)`
           );
           return parsed;
-        } catch {
+        } catch (parseError) {
           throw new Error(
-            `Failed to parse LLM response as JSON: ${content.substring(0, 100)}`
+            `Failed to parse LLM response as JSON: ${
+              parseError instanceof Error ? parseError.message : String(parseError)
+            }. Response preview: ${content.substring(0, 160)}`
           );
         }
       } catch (error) {
@@ -283,9 +285,33 @@ Please generate a JSON response with the PR description details.`;
           },
         ],
         generationConfig: {
-          temperature: 0.7,
+          temperature: 0.2,
           maxOutputTokens: 1000,
           responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            required: ["summary", "keyPoints", "highlights", "breaking"],
+            properties: {
+              summary: {
+                type: "STRING",
+              },
+              keyPoints: {
+                type: "ARRAY",
+                items: {
+                  type: "STRING",
+                },
+              },
+              highlights: {
+                type: "ARRAY",
+                items: {
+                  type: "STRING",
+                },
+              },
+              breaking: {
+                type: "BOOLEAN",
+              },
+            },
+          },
         },
       }),
     });
@@ -318,6 +344,15 @@ Please generate a JSON response with the PR description details.`;
         return JSON.parse(candidate) as LLMOutput;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
+
+        try {
+          return JSON.parse(this.repairJson(candidate)) as LLMOutput;
+        } catch (repairError) {
+          lastError =
+            repairError instanceof Error
+              ? repairError
+              : new Error(String(repairError));
+        }
       }
     }
 
@@ -352,5 +387,13 @@ Please generate a JSON response with the PR description details.`;
     }
 
     return Array.from(candidates);
+  }
+
+  private repairJson(content: string): string {
+    return content
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/, "")
+      .replace(/,\s*([}\]])/g, "$1")
+      .trim();
   }
 }

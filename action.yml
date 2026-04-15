@@ -33,7 +33,7 @@ inputs:
   debug:
     description: "Enable debug mode for more verbose logging during action execution."
     required: false
-    default: "false"
+    default: "true"
   # max_tokens:
   #   description: "Maximum number of tokens for the generated description."
   #   required: false
