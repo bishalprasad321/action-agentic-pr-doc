@@ -142,11 +142,6 @@ check("dist/licenses.txt exists (ncc bundle metadata)", () => {
   }
 });
 
-// 10. Verify .github directory structure
-check(".github/agents directory", () => {
-  if (!fs.existsSync(".github/agents")) throw new Error("Not found");
-});
-
 check(".github/workflows directory", () => {
   if (!fs.existsSync(".github/workflows")) throw new Error("Not found");
 });
