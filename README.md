@@ -324,6 +324,6 @@ MIT © Bishal Prasad
 
 ## Support
 
-- 📖 [GitHub Issues](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/issues)
-- 💬 [Discussions](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/discussions)
-- 📧 Email: bishal@example.com
+- 📖 [GitHub Issues](https://github.com/bishalprasad321/action-agentic-pr-doc/issues)
+- 💬 [Discussions](https://github.com/bishalprasad321/action-agentic-pr-doc/discussions)
+- 📧 Email: bishalprasad321@gmail.com
