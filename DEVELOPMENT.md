@@ -6,7 +6,7 @@ This guide covers setting up the project for development, architecture details, 
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/bishal-pdMSFT/action-agentic-pr-doc.git
+git clone https://github.com/bishalprasad321/action-agentic-pr-doc.git
 cd action-agentic-pr-doc
 npm install
 
@@ -489,4 +489,5 @@ npm test -- --verbose
 - [GitHub Actions Docs](https://docs.github.com/en/actions)
 - [Octokit SDK](https://github.com/octokit/rest.js)
 - [OpenAI API](https://platform.openai.com/docs/api-reference)
+- [Gemini API](https://ai.google.dev/api)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)

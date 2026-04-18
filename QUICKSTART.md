@@ -78,21 +78,6 @@ npm run dev          # Run with ts-node
 
 ---
 
-## Option 3: Try the Diff Analyzer Agent
-
-Use the custom Diff Analyzer agent in VS Code Copilot:
-
-1. Open VS Code Copilot Chat
-2. Type: `@diff-analyzer Analyze git diff for src/index.ts`
-3. Get instant JSON classification with:
-   - Summary of changes
-   - Change type (feature/bugfix/refactor/test/config)
-   - Key changes list
-
-See [.github/agents/diff-analyzer.agent.md](.github/agents/diff-analyzer.agent.md) for details.
-
----
-
 ## What Happens
 
 When you create/update a PR:
@@ -196,9 +181,9 @@ Prices vary based on model and diff size.
 
 ## Support
 
-- 💬 [GitHub Discussions](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/discussions)
-- 🐛 [Report Issues](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/issues)
-- 📧 Email: bishal@example.com
+- 💬 [GitHub Discussions](https://github.com/bishalprasad321/action-agentic-pr-doc/discussions)
+- 🐛 [Report Issues](https://github.com/bishalprasad321/action-agentic-pr-doc/issues)
+- 📧 Email: bishalprasad321@gmail.com
 
 ---
 
@@ -208,7 +193,7 @@ If this helps, please star the repo!
 
 ```bash
 # Clone, setup, build, done!
-git clone https://github.com/bishal-pdMSFT/action-agentic-pr-doc.git
+git clone https://github.com/bishalprasad321/action-agentic-pr-doc.git
 cd action-agentic-pr-doc
 npm install && npm run build
 ```
