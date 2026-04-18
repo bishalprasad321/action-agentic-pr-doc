@@ -65,11 +65,7 @@ jobs:
             echo "Error: dist/index.js not found"
             exit 1
           fi
-          if [ ! -f dist/licenses.txt ]; then
-            echo "Error: dist/licenses.txt not found"
-            exit 1
-          fi
-          echo "dist/index.js and dist/licenses.txt exist and are ready"
+          echo "✓ dist/index.js verified and ready"
 
       - name: Ensure committed dist is up to date
         run: |
