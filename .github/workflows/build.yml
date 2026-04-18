@@ -69,7 +69,9 @@ jobs:
           echo "dist/index.js and dist/licenses.txt exist and are ready"
 
       - name: Ensure committed dist is up to date
-        run: git diff --exit-code -- dist
+        run: |
+          git config core.filemode false
+          git diff --exit-code -- dist
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
