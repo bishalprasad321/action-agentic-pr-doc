@@ -19,10 +19,15 @@ describe("Formatter", () => {
     const markdown = formatter.toMarkdown(llmOutput);
 
     expect(markdown).toContain("## 🤖 AI Generated Summary");
-    expect(markdown).toContain("### Summary\nUpdated the action build pipeline.");
+    expect(markdown).toContain("Updated the action build pipeline.");
+    expect(markdown).toContain("**Key Points:**");
     expect(markdown).toContain("- Added ncc bundling");
+    expect(markdown).toContain("**Highlights:**");
     expect(markdown).toContain("- Safer marketplace consumption");
     expect(markdown).toContain("⚠️ **BREAKING CHANGES**");
+    expect(markdown).toContain(
+      "This PR contains breaking changes that may affect consumers."
+    );
   });
 
   it("replaces an existing AI section and preserves surrounding content", () => {
@@ -60,6 +65,9 @@ describe("Formatter", () => {
     expect(updated.indexOf("<!-- AI:START -->")).toBeLessThan(
       updated.indexOf("## 🧑‍💻 Developer Notes")
     );
+    // Ensure proper spacing is maintained
+    expect(updated).toContain("\n\n<!-- AI:START -->");
+    expect(updated).toContain("<!-- AI:END -->\n\n");
     expect(formatter.getAISection(updated)).toBe("Generated summary");
   });
 
