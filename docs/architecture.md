@@ -6,8 +6,8 @@ The AI PR Description Generator follows a modular, layered architecture designed
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    GitHub Workflow Trigger                       │
-│              (pull_request: [opened, synchronize])               │
+│                    GitHub Workflow Trigger                      │
+│              (pull_request: [opened, synchronize])              │
 └──────────────────────────────┬──────────────────────────────────┘
                                │
                     ┌──────────▼───────────┐
@@ -32,24 +32,24 @@ The AI PR Description Generator follows a modular, layered architecture designed
     └──────────────────────────┼───────────────────────┘
                                │
                     ┌──────────▼────────────┐
-                    │     Formatter        │
-                    │                      │
-                    │ - Convert to Markdown│
-                    │ - Replace AI section │
-                    │ - Preserve structure │
-                    └──────────┬───────────┘
+                    │     Formatter         │
+                    │                       │
+                    │ - Convert to Markdown │
+                    │ - Replace AI section  │
+                    │ - Preserve structure  │
+                    └──────────┬─────────── ┘
                                │
                     ┌──────────▼────────────┐
-                    │   State Manager      │
-                    │                      │
-                    │ - Track SHA          │
-                    │ - Ensure idempotency │
-                    └──────────┬───────────┘
+                    │   State Manager       │
+                    │                       │
+                    │ - Track SHA           │
+                    │ - Ensure idempotency  │
+                    └──────────┬─────────── ┘
                                │
                     ┌──────────▼────────────┐
-                    │  GitHub API Update   │
-                    │  (Update PR body)    │
-                    └──────────────────────┘
+                    │  GitHub API Update    │
+                    │  (Update PR body)     │
+                    └────────────────────── ┘
 ```
 
 ## Core Modules
