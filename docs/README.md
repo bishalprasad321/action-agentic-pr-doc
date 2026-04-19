@@ -1,6 +1,6 @@
-# Documentation
+# PR Pilot Summary Documentation
 
-This directory contains comprehensive documentation for the AI PR Description Generator action.
+This directory contains comprehensive documentation for PR Pilot Summary - the intelligent PR description generator.
 
 ## Contents
 

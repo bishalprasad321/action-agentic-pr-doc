@@ -6,8 +6,8 @@ This guide covers setting up the project for development, architecture details, 
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/bishalprasad321/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/bishalprasad321/prpilot-summary.git
+cd prpilot-summary
 npm install
 
 # 2. Build and package
@@ -20,7 +20,7 @@ npm run verify && npm run lint
 ## Project Structure
 
 ```
-action-agentic-pr-doc/
+prpilot-summary/
 ├── src/
 │   ├── index.ts                 # Main entry point - orchestrator
 │   ├── github/

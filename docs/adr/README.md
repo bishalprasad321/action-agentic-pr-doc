@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This directory contains Architecture Decision Records for the AI PR Description Generator.
+This directory contains Architecture Decision Records for PR Pilot Summary.
 
 ## Overview
 

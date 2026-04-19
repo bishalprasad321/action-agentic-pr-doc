@@ -1,7 +1,7 @@
 {
-  "name": "action-agentic-pr-doc",
+  "name": "prpilot-summary",
   "version": "1.0.0",
-  "description": "Generate a pull request description using AI based on the changes made in the PR.",
+  "description": "AI-powered PR description generator - Automatically create intelligent pull request summaries using AI.",
   "author": "Bishal Prasad",
   "main": "dist/index.js",
   "scripts": {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Central Orchestrator for AI PR Description Generator
+ * Central Orchestrator for PR Pilot Summary
  *
  * Responsibilities:
  * - Coordinate all modules (github, diff, llm, state, formatter)
@@ -57,7 +57,7 @@ const logger = new Logger();
 
 async function main() {
   logger.info("=".repeat(70));
-  logger.info("🚀 AI PR Description Generator - Starting");
+  logger.info("🚀 PR Pilot Summary - Starting");
   logger.info("=".repeat(70));
 
   try {
