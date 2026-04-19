@@ -1,6 +1,8 @@
-# AI PR Description Generator
+# 🚀 PR Pilot Summary
 
-Automatically generate intelligent pull request descriptions using AI, analyzing code changes and providing meaningful summaries, key points, and insights for reviewers.
+**Automate your PR descriptions with AI.** Generate intelligent, context-aware pull request descriptions in seconds. Perfect for busy teams, open-source projects, and anyone who wants clearer PR communication.
+
+Analyzes your code changes and produces meaningful summaries, key points, and insights that help reviewers understand what changed and why.
 
 ## Features
 
@@ -38,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate AI PR Description
-        uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+        uses: bishalprasad321/prpilot-summary@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           llm_api_key: ${{ secrets.GEMINI_API_KEY }}
@@ -68,7 +70,7 @@ jobs:
 # Install dependencies
 npm install
 
-# Build from TypeScript
+# Build and bundle the action
 npm run build
 
 # Watch mode (auto-recompile on changes)
@@ -78,7 +80,7 @@ npm run watch
 ### Commands
 
 ```bash
-# Build
+# Build and bundle into dist/
 npm run build
 
 # Type check
@@ -95,6 +97,16 @@ npm run format:check
 # Development with ts-node
 npm run dev
 ```
+
+### Packaging
+
+This project uses the standard TypeScript GitHub Action layout:
+
+- `src/` contains the TypeScript source
+- `lib/` contains intermediate `tsc` output
+- `dist/` contains the committed `@vercel/ncc` bundle used by `action.yml`
+
+Before tagging or publishing the action, run `npm run build` and commit the updated `dist/` files.
 
 ## Architecture
 
@@ -232,7 +244,7 @@ Enable debug logging:
 ```yaml
 steps:
   - name: Generate AI PR Description
-    uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+    uses: bishalprasad321/prpilot-summary@v1
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       llm_api_key: ${{ secrets.GEMINI_API_KEY }}
@@ -314,6 +326,6 @@ MIT © Bishal Prasad
 
 ## Support
 
-- 📖 [GitHub Issues](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/issues)
-- 💬 [Discussions](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/discussions)
-- 📧 Email: bishal@example.com
+- 📖 [GitHub Issues](https://github.com/bishalprasad321/prpilot-summary/issues)
+- 💬 [Discussions](https://github.com/bishalprasad321/prpilot-summary/discussions)
+- 📧 Email: bishalprasad321@gmail.com

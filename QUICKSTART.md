@@ -1,6 +1,6 @@
-# 🚀 Quick Start Guide
+# 🚀 Quick Start - PR Pilot Summary
 
-Get the AI PR Description Generator running in 5 minutes.
+Get AI-powered PR descriptions running in 5 minutes.
 
 ## Option 1: Use as GitHub Action (Recommended)
 
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate AI PR Description
-        uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+        uses: bishalprasad321/prpilot-summary@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           llm_api_key: ${{ secrets.GEMINI_API_KEY }}
@@ -45,51 +45,36 @@ jobs:
 
 ### Prerequisites
 
-- Node.js 16+
+- Node.js 20+
 - npm
 
 ### Setup (2 minutes)
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/YOUR_USERNAME/prpilot-summary.git
+cd prpilot-summary
 
 # 2. Install
 npm install
 
-# 3. Verify
-npm run verify
-
-# 4. Build
+# 3. Build and package the action
 npm run build
+
+# 4. Verify
+npm run verify
 ```
 
 ### Development Commands
 
 ```bash
-npm run build         # Compile TypeScript
+npm run build         # Compile TypeScript and bundle dist/
 npm run watch        # Auto-compile on changes
 npm run lint         # Check code quality
 npm run format       # Auto-format code
 npm run typecheck    # Full type check
 npm run dev          # Run with ts-node
 ```
-
----
-
-## Option 3: Try the Diff Analyzer Agent
-
-Use the custom Diff Analyzer agent in VS Code Copilot:
-
-1. Open VS Code Copilot Chat
-2. Type: `@diff-analyzer Analyze git diff for src/index.ts`
-3. Get instant JSON classification with:
-   - Summary of changes
-   - Change type (feature/bugfix/refactor/test/config)
-   - Key changes list
-
-See [.github/agents/diff-analyzer.agent.md](.github/agents/diff-analyzer.agent.md) for details.
 
 ---
 
@@ -196,9 +181,9 @@ Prices vary based on model and diff size.
 
 ## Support
 
-- 💬 [GitHub Discussions](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/discussions)
-- 🐛 [Report Issues](https://github.com/bishal-pdMSFT/action-agentic-pr-doc/issues)
-- 📧 Email: bishal@example.com
+- 💬 [GitHub Discussions](https://github.com/bishalprasad321/prpilot-summary/discussions)
+- 🐛 [Report Issues](https://github.com/bishalprasad321/prpilot-summary/issues)
+- 📧 Email: bishalprasad321@gmail.com
 
 ---
 
@@ -208,8 +193,8 @@ If this helps, please star the repo!
 
 ```bash
 # Clone, setup, build, done!
-git clone https://github.com/bishal-pdMSFT/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/bishalprasad321/prpilot-summary.git
+cd prpilot-summary
 npm install && npm run build
 ```
 
