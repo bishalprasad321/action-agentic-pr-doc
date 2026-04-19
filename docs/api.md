@@ -138,6 +138,49 @@ debug: "false"
 
 ---
 
+## Getting API Keys
+
+### Gemini API (Recommended for Development)
+
+✅ **Free tier available** | No billing account required | Tested and used in development
+
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Click **"Create API Key"**
+3. Select **"Create new API key in new project"**
+4. Copy the generated API key
+5. Add to repo secrets as `GEMINI_API_KEY`
+
+**In your workflow:**
+
+```yaml
+llm_provider: gemini
+ai_model: gemini-2.5-flash
+llm_api_key: ${{ secrets.GEMINI_API_KEY }}
+```
+
+### OpenAI API
+
+⚠️ **Requires billing account** | Charges will apply | Not used in development/testing due to costs
+
+1. Create account on [platform.openai.com](https://platform.openai.com)
+2. Enable billing (mandatory - will charge for usage)
+3. Create API key in settings
+4. Add to repo secrets as `OPENAI_API_KEY`
+
+**In your workflow:**
+
+```yaml
+llm_provider: openai
+ai_model: gpt-4o-mini
+llm_api_key: ${{ secrets.OPENAI_API_KEY }}
+```
+
+### Other OpenAI-Compatible Providers
+
+Providers like LiteLLM, Ollama, LocalAI also work. See `llm_api_base_url` for custom endpoints.
+
+---
+
 ## PR Template Format & Behavior
 
 ### Generated Template
@@ -332,9 +375,35 @@ class LLMClient {
 ```typescript
 class Formatter {
   toMarkdown(llmOutput: LLMOutput): string;
-  replaceAISection(existingBody: string, newAIContent: string): string;
+
+  // Smart content preservation with optional file data
+  replaceAISection(
+    existingBody: string,
+    newAIContent: string,
+    files?: FileChange[] // Optional: file changes for dynamic checklist
+  ): string;
+
   getAISection(body: string): string | null;
 }
+```
+
+**Smart Features** (when `files` parameter provided):
+
+- 📝 Extracts pre-written PR descriptions and moves to Developer Notes
+- ✅ Generates dynamic checklist based on file types changed
+- 🛡️ Preserves all user content (dev notes, checklist edits)
+- 🔄 Only regenerates AI section on PR updates
+
+**Dynamic Checklist Examples:**
+
+```typescript
+// Files changed: __tests__/auth.test.ts, docs/README.md
+formatter.replaceAISection(body, aiContent, files);
+
+// Generates checklist:
+// - [x] Tests added       (detected test files)
+// - [x] Documentation updated (detected .md files)
+// - [ ] Configuration validated (only if .json/.yml changed)
 ```
 
 #### StateManager
