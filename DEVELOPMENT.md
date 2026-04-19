@@ -280,24 +280,42 @@ All types in `src/utils/types.ts`.
 
 ### Manual Testing
 
-1. **Build**:
+#### Setup (Using Gemini - Free)
+
+1. **Get Gemini API Key** (recommended for development - free tier available):
+   - Go to [Google AI Studio](https://aistudio.google.com/apikey)
+   - Click "Create API Key"
+   - Select "Create new API key in new project"
+   - Copy the API key
+
+2. **Build**:
 
    ```bash
    npm run build
    ```
 
-2. **Create test environment file** `.env.test`:
+3. **Create test environment file** `.env.test`:
 
    ```
    GITHUB_TOKEN=ghp_xxxxx
-   LLM_API_KEY=sk-xxxxx
+   LLM_API_KEY=gsk_xxxxx  # Gemini API key
    GITHUB_REPOSITORY=owner/repo
+   LLM_PROVIDER=gemini
+   AI_MODEL=gemini-2.5-flash
    ```
 
-3. **Run locally** (if needed):
+4. **Run locally** (if needed):
    ```bash
    npm run dev
    ```
+
+#### Why Gemini for Development?
+
+- ✅ **Free tier available** - No billing account required
+- ✅ **No mandatory costs** - Test without credit card
+- ✅ **Same test coverage** - Produces high-quality summaries
+- ❌ **OpenAI requires billing** - Mandatory payment account setup
+- ❌ **No true free tier** - Will charge even small amounts
 
 ### CI/CD
 
@@ -484,10 +502,21 @@ npm test -- --verbose
 5. **Push**: `git push origin main --tags`
 6. **Create Release** on GitHub with changelog
 
+## Testing Notes
+
+### API Provider Strategy
+
+**This project uses Gemini API for all development and testing:**
+
+- ✅ Gemini (default) - Free tier, no billing required, excellent for PRs
+- ⚠️ OpenAI - Requires mandatory billing account (charges apply)
+
+Both providers are fully supported at runtime, but development uses Gemini to reduce friction for contributors.
+
 ## Further Reading
 
 - [GitHub Actions Docs](https://docs.github.com/en/actions)
 - [Octokit SDK](https://github.com/octokit/rest.js)
-- [OpenAI API](https://platform.openai.com/docs/api-reference)
-- [Gemini API](https://ai.google.dev/api)
+- [Gemini API Docs](https://ai.google.dev/api) - Used for development and testing
+- [OpenAI API Docs](https://platform.openai.com/docs/api-reference) - Alternative (requires billing)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)

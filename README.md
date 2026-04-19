@@ -306,9 +306,38 @@ Uses default `${{ secrets.GITHUB_TOKEN }}` with permissions:
 
 ### LLM API Key
 
-1. Create a provider key for the model you want to use.
-2. Add it to your repo secrets, for example `OPENAI_API_KEY` or `GEMINI_API_KEY`.
-3. Reference it through `llm_api_key` in your workflow.
+#### Recommended: Gemini API (Free Tier Available)
+
+**This project is tested and developed using Gemini API.**
+
+1. **Get Gemini API Key** (free tier available, no billing required):
+   - Go to [Google AI Studio](https://aistudio.google.com/apikey)
+   - Click "Create API Key"
+   - Select "Create new API key in new project" (or existing project)
+   - Copy the generated API key
+   - Add to your repo secrets as `GEMINI_API_KEY`
+
+2. **In your workflow**, use:
+   ```yaml
+   llm_provider: gemini
+   ai_model: gemini-2.5-flash
+   llm_api_key: ${{ secrets.GEMINI_API_KEY }}
+   ```
+
+#### Alternative: OpenAI API
+
+⚠️ **Note**: OpenAI API requires a **mandatory billing account** and will charge for API usage even if you only use the free trial initially. Development and testing is done with Gemini due to this cost consideration.
+
+1. Create an OpenAI account on [platform.openai.com](https://platform.openai.com)
+2. **Enable billing** on your account (required - will incur charges)
+3. Create an API key in your account settings
+4. Add it to your repo secrets as `OPENAI_API_KEY`
+5. Reference it in your workflow:
+   ```yaml
+   llm_provider: openai
+   ai_model: gpt-4o-mini
+   llm_api_key: ${{ secrets.OPENAI_API_KEY }}
+   ```
 
 ## Contributing
 

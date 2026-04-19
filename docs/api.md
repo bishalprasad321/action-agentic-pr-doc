@@ -138,6 +138,49 @@ debug: "false"
 
 ---
 
+## Getting API Keys
+
+### Gemini API (Recommended for Development)
+
+✅ **Free tier available** | No billing account required | Tested and used in development
+
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Click **"Create API Key"**
+3. Select **"Create new API key in new project"**
+4. Copy the generated API key
+5. Add to repo secrets as `GEMINI_API_KEY`
+
+**In your workflow:**
+
+```yaml
+llm_provider: gemini
+ai_model: gemini-2.5-flash
+llm_api_key: ${{ secrets.GEMINI_API_KEY }}
+```
+
+### OpenAI API
+
+⚠️ **Requires billing account** | Charges will apply | Not used in development/testing due to costs
+
+1. Create account on [platform.openai.com](https://platform.openai.com)
+2. Enable billing (mandatory - will charge for usage)
+3. Create API key in settings
+4. Add to repo secrets as `OPENAI_API_KEY`
+
+**In your workflow:**
+
+```yaml
+llm_provider: openai
+ai_model: gpt-4o-mini
+llm_api_key: ${{ secrets.OPENAI_API_KEY }}
+```
+
+### Other OpenAI-Compatible Providers
+
+Providers like LiteLLM, Ollama, LocalAI also work. See `llm_api_base_url` for custom endpoints.
+
+---
+
 ## PR Template Format & Behavior
 
 ### Generated Template

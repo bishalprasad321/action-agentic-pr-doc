@@ -33,11 +33,22 @@ jobs:
           ai_model: gemini-2.5-flash
 ```
 
-2. Add secrets to your repo:
-   - Go to `Settings` → `Secrets and variables` → `Actions`
-   - Add `GEMINI_API_KEY` or another provider key and pass it to `llm_api_key`
+2. Get your Gemini API Key (free, no billing required):
+   - Visit [Google AI Studio](https://aistudio.google.com/apikey)
+   - Click **"Create API Key"** button
+   - Select **"Create new API key in new project"**
+   - Copy the generated key
 
-3. Create a PR and watch the magic happen! ✨
+3. Add secrets to your repo:
+   - Go to `Settings` → `Secrets and variables` → `Actions`
+   - Click **"New repository secret"**
+   - Name: `GEMINI_API_KEY`
+   - Value: Paste your Gemini API key from step 2
+   - Click **"Add secret"**
+
+4. Create a PR and watch the magic happen! ✨
+
+**Alternative Providers**: See [README.md](README.md#api-keys) for OpenAI or other LLM providers
 
 ---
 
