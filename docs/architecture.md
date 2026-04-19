@@ -2,7 +2,7 @@
 
 ## System Design
 
-The AI PR Description Generator follows a modular, layered architecture designed for clarity, testability, and maintainability.
+The PR Pilot Summary follows a modular, layered architecture designed for clarity, testability, and maintainability.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

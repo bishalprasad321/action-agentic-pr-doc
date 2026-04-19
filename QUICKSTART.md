@@ -1,6 +1,6 @@
-# 🚀 Quick Start Guide
+# 🚀 Quick Start - PR Pilot Summary
 
-Get the AI PR Description Generator running in 5 minutes.
+Get AI-powered PR descriptions running in 5 minutes.
 
 ## Option 1: Use as GitHub Action (Recommended)
 
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate AI PR Description
-        uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+        uses: bishal-pdMSFT/prpilot-summary@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           llm_api_key: ${{ secrets.GEMINI_API_KEY }}
@@ -52,8 +52,8 @@ jobs:
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/YOUR_USERNAME/prpilot-summary.git
+cd prpilot-summary
 
 # 2. Install
 npm install
@@ -181,8 +181,8 @@ Prices vary based on model and diff size.
 
 ## Support
 
-- 💬 [GitHub Discussions](https://github.com/bishalprasad321/action-agentic-pr-doc/discussions)
-- 🐛 [Report Issues](https://github.com/bishalprasad321/action-agentic-pr-doc/issues)
+- 💬 [GitHub Discussions](https://github.com/bishalprasad321/prpilot-summary/discussions)
+- 🐛 [Report Issues](https://github.com/bishalprasad321/prpilot-summary/issues)
 - 📧 Email: bishalprasad321@gmail.com
 
 ---
@@ -193,8 +193,8 @@ If this helps, please star the repo!
 
 ```bash
 # Clone, setup, build, done!
-git clone https://github.com/bishalprasad321/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/bishalprasad321/prpilot-summary.git
+cd prpilot-summary
 npm install && npm run build
 ```
 

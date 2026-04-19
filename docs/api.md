@@ -133,7 +133,7 @@ If using this action as a library in Node.js:
 ### Installation
 
 ```bash
-npm install action-agentic-pr-doc
+npm install prpilot-summary
 ```
 
 ### Usage
@@ -145,7 +145,7 @@ import {
   LLMClient,
   StateManager,
   Formatter,
-} from "action-agentic-pr-doc";
+} from "prpilot-summary";
 
 // Initialize clients
 const github = new GitHubClient(token, { owner: "user", repo: "repo" });
@@ -390,7 +390,7 @@ jobs:
       contents: read
     steps:
       - name: Generate AI PR Description
-        uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+        uses: bishal-pdMSFT/prpilot-summary@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           llm_api_key: ${{ secrets.GEMINI_API_KEY }}
@@ -402,7 +402,7 @@ jobs:
 
 ```yaml
 - name: Generate with Custom LLM Provider
-  uses: bishal-pdMSFT/action-agentic-pr-doc@v1
+  uses: bishal-pdMSFT/prpilot-summary@v1
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     llm_api_key: ${{ secrets.LITELLM_API_KEY }}

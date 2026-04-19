@@ -1,4 +1,4 @@
-# Contributing to AI PR Description Generator
+# Contributing to PR Pilot Summary
 
 Thank you for your interest in contributing! This document provides guidelines and instructions.
 
@@ -50,15 +50,15 @@ Documentation PRs are very welcome! Improve:
 
 ```bash
 # 1. Fork the repository
-# Go to https://github.com/bishal-pdMSFT/action-agentic-pr-doc
+# Go to https://github.com/bishal-pdMSFT/prpilot-summary
 # Click "Fork"
 
 # 2. Clone your fork
-git clone https://github.com/YOUR_USERNAME/action-agentic-pr-doc.git
-cd action-agentic-pr-doc
+git clone https://github.com/YOUR_USERNAME/prpilot-summary.git
+cd prpilot-summary
 
 # 3. Add upstream remote
-git remote add upstream https://github.com/bishalprasad321/action-agentic-pr-doc.git
+git remote add upstream https://github.com/bishalprasad321/prpilot-summary.git
 
 # 4. Install dependencies
 npm install
