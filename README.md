@@ -54,15 +54,15 @@ jobs:
 
 ### Inputs
 
-| Input                                | Required | Default                       | Description                                                                     |
-| ------------------------------------ | -------- | ----------------------------- | ------------------------------------------------------------------------------- |
-| `github_token`                       | ✅       | `${{ secrets.GITHUB_TOKEN }}` | GitHub token for PR access                                                      |
-| `llm_api_key`                        | ✅       | `${{ secrets.LLM_API_KEY }}`  | Provider API key such as Groq, Gemini, or OpenAI                                |
-| `llm_provider`                       | ❌       | `auto`                        | Provider routing: `auto`, `groq`, `openai`, `openai-compatible`, `gemini`       |
-| `llm_api_base_url`                   | ❌       | `""`                          | Optional custom endpoint for Groq/OpenAI-compatible providers                   |
-| `ai_model`                           | ❌       | `openai/gpt-oss-120b`         | Model to use (e.g., `openai/gpt-oss-120b`, `gemini-2.5-flash`, `gpt-4o-mini`)   |
-| `max_diff_lines`                     | ❌       | `5000`                        | Max diff lines to process before summarizing                                    |
-| `enable_incremental_diff_processing` | ❌       | `true`                        | Enable incremental processing on updates                                        |
+| Input                                | Required | Default                       | Description                                                                   |
+| ------------------------------------ | -------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| `github_token`                       | ✅       | `${{ secrets.GITHUB_TOKEN }}` | GitHub token for PR access                                                    |
+| `llm_api_key`                        | ✅       | `${{ secrets.LLM_API_KEY }}`  | Provider API key such as Groq, Gemini, or OpenAI                              |
+| `llm_provider`                       | ❌       | `auto`                        | Provider routing: `auto`, `groq`, `openai`, `openai-compatible`, `gemini`     |
+| `llm_api_base_url`                   | ❌       | `""`                          | Optional custom endpoint for Groq/OpenAI-compatible providers                 |
+| `ai_model`                           | ❌       | `openai/gpt-oss-120b`         | Model to use (e.g., `openai/gpt-oss-120b`, `gemini-2.5-flash`, `gpt-4o-mini`) |
+| `max_diff_lines`                     | ❌       | `5000`                        | Max diff lines to process before summarizing                                  |
+| `enable_incremental_diff_processing` | ❌       | `true`                        | Enable incremental processing on updates                                      |
 
 ## Local Development
 

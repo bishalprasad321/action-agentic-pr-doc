@@ -240,12 +240,12 @@ npm audit fix --force
 
 ## CI/CD Pipeline Summary
 
-| Workflow          | Trigger         | Blocking | Duration | Purpose             |
-| ----------------- | --------------- | -------- | -------- | ------------------- |
-| `ci.yml`          | Push + PR       | ✅ Yes   | 2-3 min  | Core quality checks |
-| `action-test.yml` | PR + manual     | ❌ No    | 1-2 min  | Integration testing |
-| `action-test-groq.yml` | PR + manual | ❌ No | 1-2 min | Groq integration testing |
-| `security.yml`    | Weekly + manual | ❌ No    | 1-2 min  | Dependency audit    |
+| Workflow               | Trigger         | Blocking | Duration | Purpose                  |
+| ---------------------- | --------------- | -------- | -------- | ------------------------ |
+| `ci.yml`               | Push + PR       | ✅ Yes   | 2-3 min  | Core quality checks      |
+| `action-test.yml`      | PR + manual     | ❌ No    | 1-2 min  | Integration testing      |
+| `action-test-groq.yml` | PR + manual     | ❌ No    | 1-2 min  | Groq integration testing |
+| `security.yml`         | Weekly + manual | ❌ No    | 1-2 min  | Dependency audit         |
 
 ---
 

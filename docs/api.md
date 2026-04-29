@@ -541,12 +541,12 @@ The action implements graceful error handling:
 
 ### Common Issues
 
-| Error                     | Cause                                   | Solution                                                    |
-| ------------------------- | --------------------------------------- | ----------------------------------------------------------- |
-| "Missing required inputs" | `github_token` or `llm_api_key` not set | Check secrets configuration                                 |
+| Error                     | Cause                                   | Solution                                                            |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------- |
+| "Missing required inputs" | `github_token` or `llm_api_key` not set | Check secrets configuration                                         |
 | "Invalid llm_provider"    | Provider not supported                  | Use one of: `auto`, `groq`, `openai`, `gemini`, `openai-compatible` |
-| "Failed to fetch PR"      | Invalid PR number or token permissions  | Verify PR number and token scopes                           |
-| "LLM execution failed"    | API error or rate limit                 | Check API key, quota, and retry                             |
+| "Failed to fetch PR"      | Invalid PR number or token permissions  | Verify PR number and token scopes                                   |
+| "LLM execution failed"    | API error or rate limit                 | Check API key, quota, and retry                                     |
 
 ---
 
