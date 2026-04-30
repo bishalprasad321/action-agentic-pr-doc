@@ -27,12 +27,12 @@ github_token: ${{ secrets.GITHUB_TOKEN }}
 **Type**: `string`  
 **Required**: ✅ Yes
 
-API key for your LLM provider (OpenAI, Gemini, etc.).
+API key for your LLM provider (Groq, Gemini, OpenAI, etc.).
 
 **Example**:
 
 ```yaml
-llm_api_key: ${{ secrets.GEMINI_API_KEY }}
+llm_api_key: ${{ secrets.GROQ_API_KEY }}
 ```
 
 ---
@@ -44,14 +44,14 @@ llm_api_key: ${{ secrets.GEMINI_API_KEY }}
 **Type**: `string`  
 **Required**: ❌ No  
 **Default**: `"auto"`  
-**Options**: `"auto"` | `"openai"` | `"openai-compatible"` | `"gemini"`
+**Options**: `"auto"` | `"groq"` | `"openai"` | `"openai-compatible"` | `"gemini"`
 
 Specifies which LLM provider to use. `"auto"` attempts to detect based on model name.
 
 **Example**:
 
 ```yaml
-llm_provider: gemini
+llm_provider: groq
 ```
 
 #### `llm_api_base_url`
@@ -62,7 +62,7 @@ llm_provider: gemini
 
 Custom API endpoint URL. Useful for:
 
-- OpenAI-compatible providers (LiteLLM, Ollama, LocalAI)
+- Groq/OpenAI-compatible providers (LiteLLM, Ollama, LocalAI)
 - Corporate proxies
 - Self-hosted LLM services
 
@@ -76,10 +76,11 @@ llm_api_base_url: https://api.custom-provider.com/v1
 
 **Type**: `string`  
 **Required**: ❌ No  
-**Default**: `"gpt-4o-mini"`
+**Default**: `"openai/gpt-oss-120b"`
 
 The AI model to use. Examples:
 
+- Groq: `"openai/gpt-oss-120b"`, `"openai/gpt-oss-20b"`, `"llama-3.3-70b-versatile"`
 - OpenAI: `"gpt-4o"`, `"gpt-4o-mini"`, `"gpt-3.5-turbo"`
 - Gemini: `"gemini-2.5-flash"`, `"gemini-2.0-flash"`, `"gemini-1.5-pro"`
 - Custom: Any model your endpoint supports
@@ -87,7 +88,7 @@ The AI model to use. Examples:
 **Example**:
 
 ```yaml
-ai_model: gemini-2.5-flash
+ai_model: openai/gpt-oss-120b
 ```
 
 #### `max_diff_lines`
@@ -140,7 +141,24 @@ debug: "false"
 
 ## Getting API Keys
 
-### Gemini API (Recommended for Development)
+### Groq API (Recommended Default)
+
+✅ **Free tier available** | OpenAI-compatible API | Fast production models
+
+The default model is `openai/gpt-oss-120b`, selected from Groq production models for its strong capability, 131k context window, and 65k max completion limit.
+
+1. Create a Groq API key from the Groq console
+2. Add to repo secrets as `GROQ_API_KEY`
+
+**In your workflow:**
+
+```yaml
+llm_provider: groq
+ai_model: openai/gpt-oss-120b
+llm_api_key: ${{ secrets.GROQ_API_KEY }}
+```
+
+### Gemini API
 
 ✅ **Free tier available** | No billing account required | Tested and used in development
 
@@ -218,8 +236,7 @@ Summary of code changes and impact.
 
 ## ✅ Checklist
 
-- [ ] Tests added
-- [ ] Documentation updated
+- [ ] Documentation updated / modified
 ```
 
 ### Section Behavior
@@ -380,7 +397,7 @@ class Formatter {
   replaceAISection(
     existingBody: string,
     newAIContent: string,
-    files?: FileChange[] // Optional: file changes for dynamic checklist
+    files?: FileChange[] // Optional: file changes for generic checklist
   ): string;
 
   getAISection(body: string): string | null;
@@ -390,20 +407,18 @@ class Formatter {
 **Smart Features** (when `files` parameter provided):
 
 - 📝 Extracts pre-written PR descriptions and moves to Developer Notes
-- ✅ Generates dynamic checklist based on file types changed
+- ✅ Generates a generic checklist based on markdown file changes
 - 🛡️ Preserves all user content (dev notes, checklist edits)
 - 🔄 Only regenerates AI section on PR updates
 
-**Dynamic Checklist Examples:**
+**Generic Checklist Example:**
 
 ```typescript
-// Files changed: __tests__/auth.test.ts, docs/README.md
+// Files changed: docs/README.md
 formatter.replaceAISection(body, aiContent, files);
 
 // Generates checklist:
-// - [x] Tests added       (detected test files)
-// - [x] Documentation updated (detected .md files)
-// - [ ] Configuration validated (only if .json/.yml changed)
+// - [x] Documentation updated / modified
 ```
 
 #### StateManager
@@ -523,12 +538,12 @@ The action implements graceful error handling:
 
 ### Common Issues
 
-| Error                     | Cause                                   | Solution                                                    |
-| ------------------------- | --------------------------------------- | ----------------------------------------------------------- |
-| "Missing required inputs" | `github_token` or `llm_api_key` not set | Check secrets configuration                                 |
-| "Invalid llm_provider"    | Provider not supported                  | Use one of: `auto`, `openai`, `gemini`, `openai-compatible` |
-| "Failed to fetch PR"      | Invalid PR number or token permissions  | Verify PR number and token scopes                           |
-| "LLM execution failed"    | API error or rate limit                 | Check API key, quota, and retry                             |
+| Error                     | Cause                                   | Solution                                                            |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------- |
+| "Missing required inputs" | `github_token` or `llm_api_key` not set | Check secrets configuration                                         |
+| "Invalid llm_provider"    | Provider not supported                  | Use one of: `auto`, `groq`, `openai`, `gemini`, `openai-compatible` |
+| "Failed to fetch PR"      | Invalid PR number or token permissions  | Verify PR number and token scopes                                   |
+| "LLM execution failed"    | API error or rate limit                 | Check API key, quota, and retry                                     |
 
 ---
 
@@ -554,9 +569,9 @@ jobs:
         uses: bishalprasad321/prpilot-summary@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          llm_api_key: ${{ secrets.GEMINI_API_KEY }}
-          llm_provider: gemini
-          ai_model: gemini-2.5-flash
+          llm_api_key: ${{ secrets.GROQ_API_KEY }}
+          llm_provider: groq
+          ai_model: openai/gpt-oss-120b
 ```
 
 ### Advanced Setup with Custom Provider

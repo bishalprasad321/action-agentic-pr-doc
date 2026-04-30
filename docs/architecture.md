@@ -116,6 +116,7 @@ The PR Pilot Summary follows a modular, layered architecture designed for clarit
 
 **Supported Providers**:
 
+- Groq
 - OpenAI (GPT-4, GPT-3.5)
 - Gemini
 - OpenAI-compatible endpoints
@@ -136,7 +137,7 @@ The PR Pilot Summary follows a modular, layered architecture designed for clarit
 - `toMarkdown(llmOutput)` - Convert JSON to Markdown (AI content only)
 - `replaceAISection(body, content, files?)` - Replace/append AI section with smart content preservation
 - `extractRawPRDescription(body)` - Extract user pre-written descriptions
-- `generateDynamicChecklist(files)` - Create smart checklist based on file changes
+- `generateDynamicChecklist(files)` - Create generic checklist based on markdown file changes
 - `extractExistingDeveloperNotes(body)` - Preserve developer notes
 - `extractExistingChecklist(body)` - Preserve user's custom checklist items
 - `createCompleteTemplate(aiContent, devNotes, checklist)` - Generate full template
@@ -146,12 +147,8 @@ The PR Pilot Summary follows a modular, layered architecture designed for clarit
 
 - ✅ Extracts and preserves user-written PR descriptions
 - ✅ Moves raw descriptions to Developer Notes section
-- ✅ Generates dynamic checklist based on file types changed:
-  - ✅ Tests added (if test files modified)
-  - ✅ Documentation updated (if .md files modified)
-  - ⬜ Configuration validated (if config files modified)
-  - ⬜ Performance reviewed (for large diffs >500 changes)
-  - ⬜ Breaking changes documented (for large deletions >100 lines)
+- ✅ Generates generic checklist based on markdown file changes:
+  - ✅ Documentation updated / modified (checked only when `*.md` files changed)
 - ✅ Preserves developer notes and checklist items
 - ✅ Uses HTML comments as markers (`<!-- AI:START -->...<!-- AI:END -->`)
 - ✅ Generates complete template on first run (4 sections)
@@ -163,7 +160,7 @@ The PR Pilot Summary follows a modular, layered architecture designed for clarit
 
 1. **Extract** - Raw description from PR body
 2. **Merge** - Raw description + existing developer notes
-3. **Generate** - Dynamic checklist based on files changed
+3. **Generate** - Generic checklist based on markdown files changed
 4. **Update** - Replace only AI section, preserve everything else
 5. **Result** - Zero data loss, smart suggestions
 
@@ -279,9 +276,9 @@ The PR Pilot Summary follows a modular, layered architecture designed for clarit
 {
   githubToken: string;          // GitHub API token
   llmApiKey: string;            // LLM provider API key
-  llmProvider: string;          // Provider: auto|openai|gemini|openai-compatible
+  llmProvider: string;          // Provider: auto|groq|openai|gemini|openai-compatible
   llmApiBaseUrl?: string;       // Custom endpoint (optional)
-  aiModel: string;              // Model name (e.g., gpt-4o-mini)
+  aiModel: string;              // Model name (e.g., openai/gpt-oss-120b)
   maxDiffLines: number;         // Truncate threshold (default: 5000)
   enableIncrementalDiffProcessing: boolean; // Use incremental mode
   debug: boolean;               // Verbose logging
